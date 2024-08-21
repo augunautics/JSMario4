@@ -1,3 +1,4 @@
+//save
 export default class Platform {
   constructor({ x, y, width, height, context, image = null }) {
     this.position = { x, y };

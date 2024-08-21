@@ -1,3 +1,4 @@
+//save
 export default class ImageLoader {
   constructor({ player, platform }) {
       this.imageUrls = { player, platform };
