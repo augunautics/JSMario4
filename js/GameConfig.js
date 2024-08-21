@@ -10,14 +10,16 @@ export default class GameConfig {
   constructor() {
     // Initialize the canvas and context
     this.canvas = document.querySelector('canvas');
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    //this.canvas.width = window.innerWidth;
+    this.canvas.width = 1024;
+    //this.canvas.height = window.innerHeight;
+    this.canvas.height = 576
     this.context = this.canvas.getContext('2d');
 
     // Initialize the player
     this.player = new Player({
       x: 100,
-      y: 800,
+      y: 200,
       width: 30,
       height: 30,
       velocityX: 0,
@@ -29,8 +31,8 @@ export default class GameConfig {
 
     // Initialize the platforms
     this.platforms = [
-      new Platform({ x: 300, y: 700, width: 200, height: 20, context: this.context }),
-      new Platform({ x: 600, y: 500, width: 200, height: 20, context: this.context }),
+      new Platform({ x: 300, y: 300, width: 200, height: 20, context: this.context }),
+      new Platform({ x: 600, y: 500, width: 100, height: 20, context: this.context }),
     ];
 
     // Initialize event handlers

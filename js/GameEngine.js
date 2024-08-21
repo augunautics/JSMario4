@@ -14,19 +14,26 @@ export default class GameEngine {
 
   animate() {
     requestAnimationFrame(this.animate);
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+  
+    // Set the fill color to white
+    this.context.fillStyle = 'white';
+    
+    // Fill the entire canvas with the fill color (white)
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  
+    // Now handle player and platform movements, collisions, and rendering
     this.platforms.forEach((platform) => {
       this.handlePlayerMovement(platform);
       this.handlePlatformMovement(platform);
       this.handleCollisionDetection(platform);
-
+  
       platform.draw();
     });
-
+  
     this.player.update();
     this.checkScrollOffset(); // Call the method to check scroll offset
   }
+  
 
   handlePlayerMovement(platform) {
     const movementSpeed = 5; // Define a constant for the player's movement speed
