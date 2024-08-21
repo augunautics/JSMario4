@@ -28,59 +28,59 @@ export default class GameEngine {
     this.checkScrollOffset(); // Call the method to check scroll offset
   }
 
-  get isRightPressed() {
-    return this.eventHandlers.inputState.right.pressed;
-  }
-
-  get isLeftPressed() {
-    return this.eventHandlers.inputState.left.pressed;
-  }
-
-  get playerRightEdge() {
-    return this.player.position.x + this.player.width;
-  }
-
-  get playerLeftEdge() {
-    return this.player.position.x;
-  }
-
-  setPlayerHorizontalVelocity(value) {
-    this.player.velocity.x = value;
-  }
-
-  setPlayerVerticalVelocity(value) {
-    this.player.velocity.y = value;
-  }
-
   handlePlayerMovement(platform) {
-    if (this.isRightPressed && this.playerLeftEdge < 400) {
-      this.setPlayerHorizontalVelocity(5);
-    } else if (this.isLeftPressed && this.playerLeftEdge > 100) {
-      this.setPlayerHorizontalVelocity(-5);
+    const movementSpeed = 5; // Define a constant for the player's movement speed
+    const rightBoundary = 400; // Define a constant for the right boundary
+    const leftBoundary = 100; // Define a constant for the left boundary
+
+    const isRightPressed = this.eventHandlers.inputState.right.pressed;
+    const isLeftPressed = this.eventHandlers.inputState.left.pressed;
+
+    const playerLeftEdge = this.player.x; // Calculate player left edge
+
+    if (isRightPressed && playerLeftEdge < rightBoundary) {
+      this.player.velocity.x = movementSpeed;
+    } else if (isLeftPressed && playerLeftEdge > leftBoundary) {
+      this.player.velocity.x = -movementSpeed;
     } else {
-      this.setPlayerHorizontalVelocity(0);
+      this.player.velocity.x = 0;
     }
   }
 
   handlePlatformMovement(platform) {
-    if (this.isRightPressed && this.player.velocity.x === 0) {
-      platform.position.x -= 5;
-      this.scrollOffset += 5; // Decrease offset when moving right
-    } else if (this.isLeftPressed && this.player.velocity.x === 0) {
-      platform.position.x += 5;
-      this.scrollOffset -= 5; // Increase offset when moving left
+    const movementSpeed = 5; // Define a constant for the platform movement speed
+
+    const isRightPressed = this.eventHandlers.inputState.right.pressed;
+    const isLeftPressed = this.eventHandlers.inputState.left.pressed;
+
+    if (isRightPressed && this.player.velocity.x === 0) {
+      platform.x -= movementSpeed;
+      this.scrollOffset += movementSpeed; // Decrease offset when moving right
+    } else if (isLeftPressed && this.player.velocity.x === 0) {
+      platform.x += movementSpeed;
+      this.scrollOffset -= movementSpeed; // Increase offset when moving left
     }
-    
   }
 
   handleCollisionDetection(platform) {
+    const playerBottom = this.player.y + this.player.height;
+    const playerTop = this.player.y;
+    const playerLeft = this.player.x;
+    const playerRight = this.player.x + this.player.width;
+
+    const platformTop = platform.y;
+    const platformBottom = platform.y + platform.height;
+    const platformLeft = platform.x;
+    const platformRight = platform.x + platform.width;
+
     if (
-      this.player.playerBottom <= platform.platformTop &&
-      this.player.playerBottomWithVelocity >= platform.platformTop &&
-      this.playerRightEdge >= platform.platformLeft &&
-      this.player.position.x <= platform.platformRight
+      playerBottom <= platformTop &&
+      playerBottom + this.player.velocity.y >= platformTop &&
+      playerRight >= platformLeft &&
+      playerLeft <= platformRight
     ) {
-      this.setPlayerVerticalVelocity(0);
+      this.player.y = platformTop - this.player.height;
+      this.player.velocity.y = 0;
     }
   }
 

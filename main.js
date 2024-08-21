@@ -67,9 +67,11 @@ const gameEngine = new GameEngine({
 
 imageLoader.getImages().then(() => {
   player.setImage(imageLoader.getPlayerImage());
-  platforms[0].setImage(imageLoader.getPlatformImage());
-  platforms[1].setImage(imageLoader.getPlatformImage());
 
+  // Loop through each platform and set the image
+  for (const platform of platforms) {
+    platform.setImage(imageLoader.getPlatformImage());
+  }
   // After setting the images, setup event listeners and start the animation
   eventHandlers.setupListeners();
   gameEngine.animate(); // Start the animation loop
