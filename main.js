@@ -1,29 +1,20 @@
 import GameConfig from './js/GameConfig.js';
 
+// Initialize the game configuration
 const config = new GameConfig();
 
-// Access the game objects and engine through GameConfig
+// Access game objects and engine through GameConfig
 const player = config.getPlayer();
 const platforms = config.getPlatforms();
 const eventHandlers = config.getEventHandlers();
 const imageLoader = config.getImageLoader();
 const gameEngine = config.getGameEngine();
 
-// Load images and start the game once they are ready
+// Load images and start the game
 imageLoader.getImages().then(() => {
-  const platformImage = imageLoader.getPlatformImage();
-
-  // Set platform dimensions based on the loaded image
-  platforms.forEach(platform => {
-    platform.width = platformImage.width;
-    platform.height = platformImage.height;
-    platform.setImage(platformImage);
-  });
-
-  // Set the player image
   player.setImage(imageLoader.getPlayerImage());
+  platforms.forEach(platform => platform.setImage(imageLoader.getPlatformImage()));
 
-  // Setup event handlers and start the game
   eventHandlers.setupListeners();
   gameEngine.animate(); // Start the animation loop
 }).catch(error => {

@@ -1,3 +1,5 @@
+// GameConfig.js
+
 import Player from './Player.js';
 import Platform from './Platform.js';
 import EventHandlers from './EventHandlers.js';
@@ -8,44 +10,16 @@ export default class GameConfig {
   constructor() {
     // Initialize the canvas and context
     this.canvas = document.querySelector('canvas');
+    //this.canvas.width = window.innerWidth;
     this.canvas.width = 1024;
-    this.canvas.height = 576;
+    //this.canvas.height = window.innerHeight;
+    this.canvas.height = 576
     this.context = this.canvas.getContext('2d');
-
-    // Platform 1 values
-    const platform1X = 100;
-    const platform1Y = 451;
-    const platform1Width = 200;
-    const platform1Height = 20;
-
-    // Platform 2 values
-    const platform2X = 600;
-    const platform2Y = 200;
-    const platform2Width = 100;
-    const platform2Height = 20;
-
-    // Initialize the platforms using the defined values
-    this.platforms = [
-      new Platform({
-        x: platform1X,
-        y: platform1Y,
-        width: platform1Width,
-        height: platform1Height,
-        context: this.context
-      }),
-      new Platform({
-        x: platform2X,
-        y: platform2Y,
-        width: platform2Width,
-        height: platform2Height,
-        context: this.context
-      }),
-    ];
 
     // Initialize the player
     this.player = new Player({
       x: 100,
-      y: 0,
+      y: 200,
       width: 30,
       height: 30,
       velocityX: 0,
@@ -54,6 +28,12 @@ export default class GameConfig {
       canvas: this.canvas,
       gravity: 0.5,
     });
+
+    // Initialize the platforms
+    this.platforms = [
+      new Platform({ x: 300, y: 300, width: 200, height: 20, context: this.context }),
+      new Platform({ x: 600, y: 500, width: 100, height: 20, context: this.context }),
+    ];
 
     // Initialize event handlers
     this.eventHandlers = new EventHandlers(this.player);
