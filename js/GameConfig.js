@@ -20,8 +20,8 @@ export default class GameConfig {
     this.player = new Player({
       x: 100,
       y: 200,
-      width: 30,
-      height: 30,
+      width: 175,
+      height: 200,
       velocityX: 0,
       velocityY: 1,
       context: this.context,
@@ -31,8 +31,13 @@ export default class GameConfig {
 
     // Initialize the platforms
     this.platforms = [
-      new Platform({ x: 300, y: 300, width: 200, height: 20, context: this.context }),
-      new Platform({ x: 600, y: 500, width: 100, height: 20, context: this.context }),
+      new Platform({
+        x: 0,  // Start at the left edge of the canvas
+        y: this.canvas.height - 125,  // Positioned at the bottom of the canvas
+        width: 2000,  // Extend the full width of the canvas
+        height: 125,  // Height of the ground section
+        context: this.context
+      })
     ];
 
     // Initialize event handlers

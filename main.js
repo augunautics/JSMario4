@@ -18,5 +18,5 @@ imageLoader.getImages().then(() => {
   eventHandlers.setupListeners();
   gameEngine.animate(); // Start the animation loop
 }).catch(error => {
-  console.error('Failed to load images:', error);
+  console.error('Failed to load imageds:', error);
 });

@@ -36,7 +36,7 @@ export default class GameEngine {
   
 
   handlePlayerMovement(platform) {
-    const movementSpeed = 5; // Define a constant for the player's movement speed
+    const movementSpeed = 2; // Define a constant for the player's movement speed
     const rightBoundary = 400; // Define a constant for the right boundary
     const leftBoundary = 100; // Define a constant for the left boundary
 

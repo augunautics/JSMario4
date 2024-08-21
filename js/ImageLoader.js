@@ -16,6 +16,7 @@ export default class ImageLoader {
           const img = new Image();
           img.onload = () => {
               this.images[key] = img;  // Store the loaded image by its key (player or platform)
+              console.log(`Platform image dimensions: ${img.width}x${img.height}`);
               resolve(img);
           };
           img.onerror = () => {
