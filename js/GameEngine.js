@@ -1,6 +1,7 @@
 //save
 export default class GameEngine {
-  constructor({ player, platforms, context, eventHandlers, canvas }) {
+  constructor({ background, player, platforms, context, eventHandlers, canvas }) {
+    this.background = background;
     this.player = player;
     this.platforms = platforms;
     this.context = context;
@@ -21,6 +22,7 @@ export default class GameEngine {
     // Fill the entire canvas with the fill color (white)
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   
+    this.background.draw();
     // Now handle player and platform movements, collisions, and rendering
     this.platforms.forEach((platform) => {
       this.handlePlayerMovement(platform);

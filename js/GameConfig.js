@@ -3,6 +3,7 @@ import Platform from './Platform.js';
 import EventHandlers from './EventHandlers.js';
 import ImageLoader from './ImageLoader.js';
 import GameEngine from './GameEngine.js';
+import Background from './Background.js';
 
 export default class GameConfig {
   constructor() {
@@ -11,6 +12,13 @@ export default class GameConfig {
     this.canvas.width = 1024;
     this.canvas.height = 576;
     this.context = this.canvas.getContext('2d');
+
+    this.background = new Background({
+      width: this.canvas.width,
+      height: this.canvas.height,
+      context: this.context,
+      
+    });
 
     // Initialize the player
     this.player = new Player({
@@ -38,6 +46,7 @@ export default class GameConfig {
 
     // Initialize the game engine first
     this.gameEngine = new GameEngine({
+      background: this.background,
       player: this.player,
       platforms: this.platforms,
       context: this.context,
@@ -55,6 +64,7 @@ export default class GameConfig {
     this.imageLoader = new ImageLoader({
       player: './img/player.png',
       platform: './img/platform.png',
+      background: './img/background.png',
     });
   }
 
@@ -96,5 +106,8 @@ export default class GameConfig {
   // Method to get the config itself (for flexibility)
   getConfig() {
     return this;
+  }
+  getBackground() {
+    return this.background;
   }
 }

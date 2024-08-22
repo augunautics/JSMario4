@@ -1,7 +1,7 @@
 //save
 export default class ImageLoader {
-  constructor({ player, platform }) {
-      this.imageUrls = { player, platform };
+  constructor({ player, platform, background }) {
+      this.imageUrls = { player, platform, background };
       this.images = {};
       this.loadPromise = this.loadAll();  // Automatically start loading images
   }
@@ -32,6 +32,10 @@ export default class ImageLoader {
 
   getPlatformImage() {
       return this.images.platform;
+  }
+
+  getBackgroundImage() {
+    return  this.images.background;
   }
 
   getImages() {
