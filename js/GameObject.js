@@ -33,6 +33,6 @@ export default class GameObject {
         this.context.fillStyle = 'blue';
         this.context.fillRect(this.x, this.y, this.width, this.height);
       }
-    }s
+    }
   }
   
