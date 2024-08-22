@@ -61,7 +61,7 @@ export default class GameConfig {
   // Method to get the player
   getPlayer() {
     return this.player;
-  }
+  } 
 
   // Method to get the platforms
   getPlatforms() {
