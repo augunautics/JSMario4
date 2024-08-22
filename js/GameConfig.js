@@ -1,5 +1,3 @@
-// GameConfig.js
-
 import Player from './Player.js';
 import Platform from './Platform.js';
 import EventHandlers from './EventHandlers.js';
@@ -10,10 +8,8 @@ export default class GameConfig {
   constructor() {
     // Initialize the canvas and context
     this.canvas = document.querySelector('canvas');
-    //this.canvas.width = window.innerWidth;
     this.canvas.width = 1024;
-    //this.canvas.height = window.innerHeight;
-    this.canvas.height = 576
+    this.canvas.height = 576;
     this.context = this.canvas.getContext('2d');
 
     // Initialize the player
@@ -40,22 +36,25 @@ export default class GameConfig {
       })
     ];
 
-    // Initialize event handlers
-    this.eventHandlers = new EventHandlers(this.player);
+    // Initialize the game engine first
+    this.gameEngine = new GameEngine({
+      player: this.player,
+      platforms: this.platforms,
+      context: this.context,
+      eventHandlers: null, // Set to null initially
+      canvas: this.canvas,
+    });
+
+    // Initialize event handlers with the game engine
+    this.eventHandlers = new EventHandlers(this.player, this.gameEngine);
+
+    // Update the game engine with the event handlers
+    this.gameEngine.eventHandlers = this.eventHandlers;
 
     // Initialize the image loader
     this.imageLoader = new ImageLoader({
       player: './img/player.png',
       platform: './img/platform.png',
-    });
-
-    // Initialize the game engine
-    this.gameEngine = new GameEngine({
-      player: this.player,
-      platforms: this.platforms,
-      context: this.context,
-      eventHandlers: this.eventHandlers,
-      canvas: this.canvas,
     });
   }
 

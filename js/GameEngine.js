@@ -100,4 +100,24 @@ export default class GameEngine {
       console.log('Scroll offset less than  0:', this.scrollOffset);
     }
   }
+
+  isPlayerOnGround() {
+    const playerTop = this.player.top;
+    const playerBottom = this.player.bottom;
+    const playerLeft = this.player.left;
+    const playerRight = this.player.right;
+  
+    return this.platforms.some(platform => {
+      const platformTop = platform.y;
+      const platformLeft = platform.x;
+      const platformRight = platform.x + platform.width;
+  
+      return (
+        playerBottom === platformTop &&
+        playerRight > platformLeft &&
+        playerLeft < platformRight
+      );
+    });
+  }
+  
 }

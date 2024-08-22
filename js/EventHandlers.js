@@ -1,8 +1,7 @@
-// EventHandlers.js
-//save
 export default class EventHandlers {
-  constructor(player) {
+  constructor(player, gameEngine) {
     this.player = player;
+    this.gameEngine = gameEngine; // Add reference to GameEngine
 
     this.inputState = {
       right: {
@@ -35,7 +34,9 @@ export default class EventHandlers {
         break;
       case 'w':
       case 'W':
-        this.player.velocity.y -= 20;
+        if (this.gameEngine.isPlayerOnGround()) {  // Check if the player is on the ground
+          this.player.velocity.y -= 20;  // Allow jump only if on the ground
+        }
         break;
     }
   }

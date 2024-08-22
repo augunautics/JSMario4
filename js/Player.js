@@ -1,5 +1,3 @@
-// js/Player.js
-
 import GameObject from './GameObject.js';
 
 export default class Player extends GameObject {
@@ -10,20 +8,24 @@ export default class Player extends GameObject {
     this.gravity = gravity;
   }
 
-  get playerBottom() {
+  get bottom() {
     return this.y + this.height;
   }
 
-  get playerBottomWithVelocity() {
+  get bottomWithVelocity() {
     return this.y + this.height + this.velocity.y;
   }
 
-  get playerRightSide() {
+  get right() {
     return this.x + this.width;
   }
 
-  get playerLeftSide() {
+  get left() {
     return this.x;
+  }
+
+  get top() {
+    return this.y;
   }
 
   update() {
@@ -32,7 +34,7 @@ export default class Player extends GameObject {
     this.y += this.velocity.y;
 
     // Apply gravity only if the player is not touching the bottom of the canvas
-    if (this.playerBottomWithVelocity <= this.canvas.height) {
+    if (this.bottomWithVelocity <= this.canvas.height) {
       this.velocity.y += this.gravity;
     } else {
       this.velocity.y = 0;
