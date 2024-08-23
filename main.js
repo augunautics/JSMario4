@@ -1,4 +1,8 @@
 import Background from './js/Background.js';
+import Hills from './js/Hills.js';
+import Player from './js/Player.js';
+import Platform from './js/Platform.js';
+
 import GameConfig from './js/GameConfig.js';
 
 // Initialize the game configuration
@@ -14,12 +18,14 @@ const eventHandlers = config.getEventHandlers();
 const imageLoader = config.getImageLoader();
 const gameEngine = config.getGameEngine();
 
+
+
 // Load images and start the game
 imageLoader.getImages().then(() => {
-  background.setImage(imageLoader.getBackgroundImage());
-  hills.setImage(imageLoader.getHillsImage());
-  player.setImage(imageLoader.getPlayerImage());
-  platforms.forEach(platform => platform.setImage(imageLoader.getPlatformImage()));
+  background.setImage(imageLoader.getImage(Background.imagePath));
+  hills.setImage(imageLoader.getImage(Hills.imagePath));
+  player.setImage(imageLoader.getImage(Player.imagePath));
+  platforms.forEach(platform => platform.setImage(imageLoader.getImage(Platform.imagePath)));
 
   eventHandlers.setupListeners();
   gameEngine.animate(); // Start the animation loop

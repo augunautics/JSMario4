@@ -1,6 +1,8 @@
 import GameObject from './GameObject.js';
 
 export default class Hills extends GameObject {
+  static imagePath = './img/hills.png';
+
   constructor({ x, y, width, height, context, image, speed }) {
     super({ x, y, width, height, context, image });
     this.speed = speed;

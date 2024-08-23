@@ -1,6 +1,7 @@
 import GameObject from './GameObject.js';
 
 export default class Platform extends GameObject {
+  static imagePath = './img/platform.png';
   draw() {
     if (this.image) {
       // Define the section of the image to repeat

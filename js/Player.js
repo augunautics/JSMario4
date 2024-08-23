@@ -1,6 +1,8 @@
 import GameObject from './GameObject.js';
 
 export default class Player extends GameObject {
+  static imagePath = './img/player.png';
+  
   constructor({ x, y, width, height, velocityX, velocityY, context, canvas, gravity, image = null }) {
     super({ x, y, width, height, context, image }); // Call the GameObject constructor
     this.velocity = { x: velocityX, y: velocityY };

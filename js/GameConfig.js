@@ -73,12 +73,8 @@ export default class GameConfig {
     this.gameEngine.eventHandlers = this.eventHandlers;
 
     // Initialize the image loader
-    this.imageLoader = new ImageLoader({
-      player: './img/player.png',
-      platform: './img/platform.png',
-      background: './img/background.png',
-      hills: './img/hills.png',
-    });
+    const classesToLoad = [Player, Platform, Background, Hills];
+    this.imageLoader = new ImageLoader(classesToLoad);
   }
 
   // Method to get the player
