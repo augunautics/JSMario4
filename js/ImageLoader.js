@@ -1,7 +1,7 @@
 //save
 export default class ImageLoader {
-  constructor({ player, platform, background }) {
-      this.imageUrls = { player, platform, background };
+  constructor({hills, background, player, platform }) {
+      this.imageUrls = { background, hills, player, platform };
       this.images = {};
       this.loadPromise = this.loadAll();  // Automatically start loading images
   }
@@ -36,6 +36,10 @@ export default class ImageLoader {
 
   getBackgroundImage() {
     return  this.images.background;
+  }
+
+  getHillsImage() {
+    return this.images.hills;
   }
 
   getImages() {

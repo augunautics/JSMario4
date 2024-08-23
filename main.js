@@ -5,9 +5,11 @@ import GameConfig from './js/GameConfig.js';
 const config = new GameConfig();
 
 // Access game objects and engine through GameConfig
+const background = config.getBackground();
+const hills = config.getHills();
+
 const player = config.getPlayer();
 const platforms = config.getPlatforms();
-const background = config.getBackground();
 const eventHandlers = config.getEventHandlers();
 const imageLoader = config.getImageLoader();
 const gameEngine = config.getGameEngine();
@@ -15,6 +17,7 @@ const gameEngine = config.getGameEngine();
 // Load images and start the game
 imageLoader.getImages().then(() => {
   background.setImage(imageLoader.getBackgroundImage());
+  hills.setImage(imageLoader.getHillsImage());
   player.setImage(imageLoader.getPlayerImage());
   platforms.forEach(platform => platform.setImage(imageLoader.getPlatformImage()));
 

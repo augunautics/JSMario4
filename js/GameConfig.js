@@ -4,6 +4,7 @@ import EventHandlers from './EventHandlers.js';
 import ImageLoader from './ImageLoader.js';
 import GameEngine from './GameEngine.js';
 import Background from './Background.js';
+import Hills from './Hills.js';
 
 export default class GameConfig {
   constructor() {
@@ -18,6 +19,16 @@ export default class GameConfig {
       height: this.canvas.height,
       context: this.context,
       
+    });
+
+    this.hills = new Hills({
+      x: 200,
+      y: 0,
+      width: 1024,
+      height: 176,
+      context: this.context,
+      image: null,
+      speed: 0.5 // Slower speed for distant hills
     });
 
     // Initialize the player
@@ -47,6 +58,7 @@ export default class GameConfig {
     // Initialize the game engine first
     this.gameEngine = new GameEngine({
       background: this.background,
+      hills: this.hills,
       player: this.player,
       platforms: this.platforms,
       context: this.context,
@@ -65,6 +77,7 @@ export default class GameConfig {
       player: './img/player.png',
       platform: './img/platform.png',
       background: './img/background.png',
+      hills: './img/hills.png',
     });
   }
 
@@ -109,5 +122,8 @@ export default class GameConfig {
   }
   getBackground() {
     return this.background;
+  }
+  getHills() {
+    return this.hills;
   }
 }
