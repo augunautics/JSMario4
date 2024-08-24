@@ -145,7 +145,7 @@ export default class GameEngine {
 
       this.player.y = 1000;
       this.player.velocity.y = 0; // Reset the velocity to prevent immediate re-falling
-      this.player.update;
+      this.player.update();
 
 
       // Reinitialize the game after a short delayawwwwdd
