@@ -1,21 +1,20 @@
-// EventHandlers.js
 export default class EventHandlers {
-  constructor(player) {
-    this.player = player;
+  constructor({ onJump, onStopJump }) {
+    this.onJump = onJump;
+    this.onStopJump = onStopJump;
+
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    this.boundHandleKeyup = this.handleKeyup.bind(this);
 
     this.inputState = {
-      right: {
-        pressed: false,
-      },
-      left: {
-        pressed: false,
-      },
+      right: { pressed: false },
+      left: { pressed: false },
     };
   }
 
   setupListeners() {
-    window.addEventListener('keydown', this.handleKeydown.bind(this));
-    window.addEventListener('keyup', this.handleKeyup.bind(this));
+    window.addEventListener('keydown', this.boundHandleKeydown);
+    window.addEventListener('keyup', this.boundHandleKeyup);
   }
 
   handleKeydown(event) {
@@ -28,13 +27,9 @@ export default class EventHandlers {
       case 'A':
         this.inputState.left.pressed = true;
         break;
-      case 's':
-      case 'S':
-        this.player.velocity.y += 10;
-        break;
       case 'w':
       case 'W':
-        this.player.velocity.y -= 20;
+        this.onJump();  // Call the jump callback
         break;
     }
   }
@@ -49,11 +44,9 @@ export default class EventHandlers {
       case 'A':
         this.inputState.left.pressed = false;
         break;
-      case 's':
-      case 'S':
       case 'w':
       case 'W':
-        this.player.velocity.y = 0;
+        this.onStopJump();  // Call the stop jump callback
         break;
     }
   }

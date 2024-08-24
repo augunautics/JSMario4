@@ -1,77 +1,64 @@
-export default class Player {
-  constructor({
-    x,
-    y,
-    width,
-    height,
-    velocityX,
-    velocityY,
-    context,
-    canvas,
-    gravity,
-    image = null, // Add image as an optional property
-  }) {
-    this.position = { x, y };
-    this.width = width;
-    this.height = height;
+import GameObject from './GameObject.js';
+
+export default class Player extends GameObject {
+  static imagePath = './img/player.png';
+  
+  constructor({ x, y, width, height, velocityX, velocityY, context, canvas, gravity, image = null }) {
+    super({ x, y, width, height, context, image }); // Call the GameObject constructor
     this.velocity = { x: velocityX, y: velocityY };
-    this.context = context; // Store context as a class property
     this.canvas = canvas; // Store canvas as a class property
     this.gravity = gravity;
-    this.image = image; // Store the image property
   }
 
-  setImage(image) {
-    this.image = image; // Method to set the image after the player is instantiated
+  get bottom() {
+    return this.y + this.height;
   }
 
-  get playerBottom() {
-    return this.position.y + this.height;
+  get bottomWithVelocity() {
+    return this.y + this.height + this.velocity.y;
   }
 
-  get playerBottomWithVelocity() {
-    return this.position.y + this.height + this.velocity.y;
+  get right() {
+    return this.x + this.width;
   }
 
-  get playerRightSide() {
-    return this.position.x + this.width;
+  get left() {
+    return this.x;
   }
 
-  get playerLeftSide() {
-    return this.position.x;
+  get top() {
+    return this.y;
+  }
+
+  update() {
+    this.draw(); // Draw the player
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+
+    // Apply gravity only if the player is not touching the bottom of the canvas
+    if (this.bottomWithVelocity <= this.canvas.height) {
+      this.velocity.y += this.gravity;
+    } 
   }
 
   draw() {
     if (this.image) {
+      const sourceX = 0;
+      const sourceY = 0;
+      const sourceWidth = this.width;  // Use width directly
+      const sourceHeight = this.image.height;
+
+      const destinationWidth = this.width;  // Use width directly
+      const destinationHeight = this.height;
+
       this.context.drawImage(
         this.image,
-        this.position.x,
-        this.position.y,
-        this.width,
-        this.height
+        sourceX, sourceY, sourceWidth, sourceHeight,
+        this.x, this.y, destinationWidth, destinationHeight
       );
     } else {
-      // Fallback to a red rectangle if no image is provided
-      this.context.fillStyle = 'red';
-      this.context.fillRect(
-        this.position.x,
-        this.position.y,
-        this.width,
-        this.height
-      );
-    }
-  }
-
-  update() {
-    this.draw();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-
-    // Apply gravity only if the player is not touching the bottom of the canvas
-    if (this.playerBottomWithVelocity <= this.canvas.height) {
-      this.velocity.y += this.gravity;
-    } else {
-      this.velocity.y = 0;
+      this.context.fillStyle = 'blue';
+      this.context.fillRect(this.x, this.y, this.width, this.height);
     }
   }
 }

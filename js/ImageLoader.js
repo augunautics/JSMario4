@@ -1,38 +1,34 @@
 export default class ImageLoader {
-  constructor({ player, platform }) {
-      this.imageUrls = { player, platform };
-      this.images = {};
-      this.loadPromise = this.loadAll();  // Automatically start loading images
+  constructor(gameObjectsImagesToLoad) {
+    this.images = {};
+    this.loadPromise = this.loadAllSprites(gameObjectsImagesToLoad);  // Automatically start loading images
   }
 
-  loadAll() {
-      const promises = Object.keys(this.imageUrls).map(key => this.loadImage(this.imageUrls[key], key));
-      return Promise.all(promises);
+  loadAllSprites(gameObjectsImagesToLoad) {
+    const promises = gameObjectsImagesToLoad.map(gameObject => this.loadImage(gameObject.imagePath, gameObject.name.toLowerCase()));
+    return Promise.all(promises);
   }
 
   loadImage(url, key) {
-      return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.onload = () => {
-              this.images[key] = img;  // Store the loaded image by its key (player or platform)
-              resolve(img);
-          };
-          img.onerror = () => {
-              reject(new Error(`Failed to load image at ${url}`));
-          };
-          img.src = url;
-      });
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        this.images[key] = img;  // Store the loaded image by class name key (e.g., 'player')
+        resolve(img);
+      };
+      img.onerror = () => {
+        reject(new Error(`Failed to load image at ${url}`));
+      };
+      img.src = url;
+    });
   }
 
-  getPlayerImage() {
-      return this.images.player;
-  }
-
-  getPlatformImage() {
-      return this.images.platform;
+  getImage(name) {
+    const key = name.toLowerCase();
+    return this.images[key] || this.images[name.toLowerCase()];
   }
 
   getImages() {
-      return this.loadPromise;
+    return this.loadPromise;
   }
 }

@@ -1,95 +1,175 @@
 export default class GameEngine {
-  constructor({ player, platforms, context, eventHandlers, canvas }) {
+  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config }) {
+    this.background = background;
+    this.hill = hill;
     this.player = player;
-    this.platforms = platforms;
+    this.platform = platform;
     this.context = context;
     this.eventHandlers = eventHandlers;
     this.canvas = canvas;
+    this.config = config;
 
     this.scrollOffset = 0; // Initialize the scrollOffset variable
+    this.isResetting = false; // Track if the game is currently resetting
 
     this.animate = this.animate.bind(this);
   }
 
   animate() {
+    if (this.isResetting) return; // Prevent further animation during reset
+
     requestAnimationFrame(this.animate);
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.platforms.forEach((platform) => {
-      this.handlePlayerMovement(platform);
-      this.handlePlatformMovement(platform);
-      this.handleCollisionDetection(platform);
+    // Set the fill color to white
+    this.context.fillStyle = 'white';
 
-      platform.draw();
-    });
+    // Fill the entire canvas with the fill color (white)
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.background.draw();
+    this.platform.draw();
+    this.handleHillParallaxMovement();
+
+    // Now handle player and platform movements, collisions, and rendering
+    this.handlePlayerMovement();
+    this.handlePlatformMovement();
+    this.handleCollisionDetection();
 
     this.player.update();
     this.checkScrollOffset(); // Call the method to check scroll offset
+    this.checkEndGame();
   }
 
-  get isRightPressed() {
-    return this.eventHandlers.inputState.right.pressed;
+  handleHillParallaxMovement() {
+    const isPlayerMoving = this.player.velocity.x !== 0;
+    const isPlatformMoving = this.platform.velocity && this.platform.velocity.x !== 0;
+
+    if (isPlayerMoving) {
+      if (this.player.velocity.x > 0) {
+        // Player is moving right, hill should move left
+        this.hill.move();
+      } else if (this.player.velocity.x < 0) {
+        // Player is moving left, hill should move right
+        this.hill.x += this.hill.speed;
+      }
+    } else if (isPlatformMoving) {
+      const platformVelocityX = this.platform.velocity.x;
+
+      if (platformVelocityX < 0) {
+        // Platform is moving right, hill should move left
+        this.hill.move();  // Hill move left
+      } else if (platformVelocityX > 0) {
+        // Platform is moving left, hill should move right
+        this.hill.x += this.hill.speed;  // Hill move right
+      }
+    }
+
+    this.hill.draw();  // Draw the hill
   }
 
-  get isLeftPressed() {
-    return this.eventHandlers.inputState.left.pressed;
-  }
+  handlePlayerMovement() {
+    const movementSpeed = 2; // Define a constant for the player's movement speed
+    const rightBoundary = 400; // Define a constant for the right boundary
+    const leftBoundary = 100; // Define a constant for the left boundary
 
-  get playerRightEdge() {
-    return this.player.position.x + this.player.width;
-  }
+    const isRightPressed = this.eventHandlers.inputState.right.pressed;
+    const isLeftPressed = this.eventHandlers.inputState.left.pressed;
 
-  get playerLeftEdge() {
-    return this.player.position.x;
-  }
+    const playerLeftEdge = this.player.x; // Calculate player left edge
 
-  setPlayerHorizontalVelocity(value) {
-    this.player.velocity.x = value;
-  }
-
-  setPlayerVerticalVelocity(value) {
-    this.player.velocity.y = value;
-  }
-
-  handlePlayerMovement(platform) {
-    if (this.isRightPressed && this.playerLeftEdge < 400) {
-      this.setPlayerHorizontalVelocity(5);
-    } else if (this.isLeftPressed && this.playerLeftEdge > 100) {
-      this.setPlayerHorizontalVelocity(-5);
+    if (isRightPressed && playerLeftEdge < rightBoundary) {
+      this.player.velocity.x = movementSpeed;
+    } else if (isLeftPressed && playerLeftEdge > leftBoundary) {
+      this.player.velocity.x = -movementSpeed;
     } else {
-      this.setPlayerHorizontalVelocity(0);
+      this.player.velocity.x = 0;
     }
   }
 
-  handlePlatformMovement(platform) {
-    if (this.isRightPressed && this.player.velocity.x === 0) {
-      platform.position.x -= 5;
-      this.scrollOffset += 5; // Decrease offset when moving right
-    } else if (this.isLeftPressed && this.player.velocity.x === 0) {
-      platform.position.x += 5;
-      this.scrollOffset -= 5; // Increase offset when moving left
+  handlePlatformMovement() {
+    const movementSpeed = 5; // Define a constant for the platform movement speed
+
+    const isRightPressed = this.eventHandlers.inputState.right.pressed;
+    const isLeftPressed = this.eventHandlers.inputState.left.pressed;
+
+    if (isRightPressed && this.player.velocity.x === 0) {
+      this.platform.velocity = { x: -movementSpeed }; // Platform moves left when player is stationary
+      this.platform.x -= movementSpeed;
+      this.scrollOffset += movementSpeed; // Decrease offset when moving right
+    } else if (isLeftPressed && this.player.velocity.x === 0) {
+      this.platform.velocity = { x: movementSpeed }; // Platform moves right when player is stationary
+      this.platform.x += movementSpeed;
+      this.scrollOffset -= movementSpeed; // Increase offset when moving left
+    } else {
+      this.platform.velocity = { x: 0 }; // No movement when player and platform are stationary
     }
-    
   }
 
-  handleCollisionDetection(platform) {
+  handleCollisionDetection() {
+    const playerBottom = this.player.y + this.player.height;
+    const playerTop = this.player.y;
+    const playerLeft = this.player.x;
+    const playerRight = this.player.x + this.player.width;
+
+    const platformTop = this.platform.y;
+    const platformLeft = this.platform.x;
+    const platformRight = this.platform.x + this.platform.width;
+
     if (
-      this.player.playerBottom <= platform.platformTop &&
-      this.player.playerBottomWithVelocity >= platform.platformTop &&
-      this.playerRightEdge >= platform.platformLeft &&
-      this.player.position.x <= platform.platformRight
+      playerBottom <= platformTop &&
+      playerBottom + this.player.velocity.y >= platformTop &&
+      playerRight >= platformLeft &&
+      playerLeft <= platformRight
     ) {
-      this.setPlayerVerticalVelocity(0);
+      this.player.y = platformTop - this.player.height;
+      this.player.velocity.y = 0;
     }
   }
 
-  // New method to check the scrollOffset and log when it exceeds 2000
   checkScrollOffset() {
     if (this.scrollOffset > 2000) {
       console.log('Scroll offset exceeded 2000:', this.scrollOffset);
     }
     if (this.scrollOffset < 0) {
-      console.log('Scroll offset less than  0:', this.scrollOffset);
+      //console.log('Scroll offset less than 0:', this.scrollOffset);
     }
+  }
+
+  checkEndGame() {
+    const playerTop = this.player.y;
+    const canvasBottom = this.canvas.height;
+
+    if (playerTop > canvasBottom && !this.isResetting) {
+      console.log('End Game');
+      this.isResetting = true; // Prevent further reset calls
+
+      this.player.y = 1000;
+      this.player.velocity.y = 0; // Reset the velocity to prevent immediate re-falling
+      this.player.update();
+
+
+      // Reinitialize the game after a short delayawwwwdd
+      setTimeout(() => {
+        this.config.init();
+        this.config.getGameEngine().animate();  // Restart the animation loop
+        this.isResetting = false; // Reset flag after the game restarts
+      }, 50);// Minimal delay to avoid immediate re-triggeringdw
+    }
+  }
+
+  isPlayerOnGround() {
+    const playerBottom = this.player.y + this.player.height;
+    const playerLeft = this.player.x;
+    const playerRight = this.player.x + this.player.width;
+
+    const platformTop = this.platform.y;
+    const platformLeft = this.platform.x;
+    const platformRight = this.platform.x + this.platform.width;
+
+    return (
+      playerBottom === platformTop &&
+      playerRight > platformLeft &&
+      playerLeft < platformRight
+    );
   }
 }
