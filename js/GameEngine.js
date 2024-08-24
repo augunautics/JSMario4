@@ -1,5 +1,6 @@
+import GameOver from './GameOver.js';  // Import the GameOver class
 export default class GameEngine {
-  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config }) {
+  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config, }) {
     this.background = background;
     this.hill = hill;
     this.player = player;
@@ -19,6 +20,12 @@ export default class GameEngine {
     if (this.isResetting) return; // Prevent further animation during reset
 
     requestAnimationFrame(this.animate);
+
+    if (this.config.deathCount >= 3) {
+      const gameOver = new GameOver({ context: this.context, canvas: this.canvas });
+      gameOver.draw();
+      return;  // Stop the animation loop
+    }
 
     // Set the fill color to white
     this.context.fillStyle = 'white';
@@ -143,19 +150,33 @@ export default class GameEngine {
       console.log('End Game');
       this.isResetting = true; // Prevent further reset calls
 
+      this.config.deathCount++; // Increment death counter
+
+      if (this.config.deathCount >= 3) {
+        console.log("Game Over");
+        const gameOver = new GameOver({ context: this.context, canvas: this.canvas });
+        gameOver.draw();
+        return;  // Stop the animation loop
+        return;
+      }
+
       this.player.y = 1000;
       this.player.velocity.y = 0; // Reset the velocity to prevent immediate re-falling
-      this.player.update();
 
-
-      // Reinitialize the game after a short delayawwwwdd
+      // Reinitialize the game after a short delay
       setTimeout(() => {
         this.config.init();
-        this.config.getGameEngine().animate();  // Restart the animation loop
-        this.isResetting = false; // Reset flag after the game restarts
-      }, 50);// Minimal delay to avoid immediate re-triggeringdw
+
+        // Ensure images are set before starting the animation
+        this.config.setImages().then(() => {
+          this.config.getGameEngine().animate();  // Restart the animation loop
+          this.isResetting = false; // Reset flag after the game restarts
+        });
+
+      }, 50); // Minimal delay to avoid immediate re-triggering
     }
   }
+
 
   isPlayerOnGround() {
     const playerBottom = this.player.y + this.player.height;

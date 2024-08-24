@@ -6,8 +6,10 @@ import GameEngine from './GameEngine.js';
 import Background from './Background.js';
 import Hill from './Hill.js';
 
+
 export default class GameConfig {
   constructor() {
+    this.deathCount = 0;
     this.init();
   }
 
@@ -86,6 +88,7 @@ export default class GameConfig {
       });
       
     }
+   
 
     // Initialize the game engine
     this.gameEngine = new GameEngine({
@@ -96,7 +99,7 @@ export default class GameConfig {
       context: this.context,
       eventHandlers: this.eventHandlers,
       canvas: this.canvas,
-      config: this,
+      config: this,     
     });
 
     
