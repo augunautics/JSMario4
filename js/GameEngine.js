@@ -1,6 +1,5 @@
-import GameOver from './GameOver.js';  // Import the GameOver class
 export default class GameEngine {
-  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config, }) {
+  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config }) {
     this.background = background;
     this.hill = hill;
     this.player = player;
@@ -154,10 +153,9 @@ export default class GameEngine {
 
       if (this.config.deathCount >= 3) {
         console.log("Game Over");
-        const gameOver = new GameOver({ context: this.context, canvas: this.canvas });
-        gameOver.draw();
+        this.config.gameOver.draw();
         return;  // Stop the animation loop
-        return;
+        
       }
 
       this.player.y = 1000;

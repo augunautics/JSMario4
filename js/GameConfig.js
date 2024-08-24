@@ -5,11 +5,12 @@ import ImageLoader from './ImageLoader.js';
 import GameEngine from './GameEngine.js';
 import Background from './Background.js';
 import Hill from './Hill.js';
+import GameOver from './GameOver.js';  // Import the GameOver class
 
 
 export default class GameConfig {
   constructor() {
-    this.deathCount = 0;
+    this.deathCount = 0;       
     this.init();
   }
 
@@ -20,6 +21,8 @@ export default class GameConfig {
     this.canvas.width = 1024;
     this.canvas.height = 576;
     this.context = this.canvas.getContext('2d');
+
+    this.gameOver = new GameOver({ context: this.context, canvas: this.canvas }); 
 
    
 
@@ -90,6 +93,8 @@ export default class GameConfig {
     }
    
 
+    
+
     // Initialize the game engine
     this.gameEngine = new GameEngine({
       background: this.background,
@@ -99,8 +104,11 @@ export default class GameConfig {
       context: this.context,
       eventHandlers: this.eventHandlers,
       canvas: this.canvas,
-      config: this,     
+      config: this, 
+      gameOver: this.gameOver,    
     });
+
+    
 
     
   }
