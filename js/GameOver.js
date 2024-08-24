@@ -25,5 +25,5 @@ export default class GameOver {
       // Draw the text
       this.context.fillText(this.message, textX, textY);
     }
-  }
+  } 
   
