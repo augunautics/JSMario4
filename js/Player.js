@@ -38,9 +38,7 @@ export default class Player extends GameObject {
     // Apply gravity only if the player is not touching the bottom of the canvas
     if (this.bottomWithVelocity <= this.canvas.height) {
       this.velocity.y += this.gravity;
-    } else {
-      this.velocity.y = 0;
-    }
+    } 
   }
 
   draw() {

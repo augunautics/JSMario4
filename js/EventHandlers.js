@@ -1,21 +1,20 @@
 export default class EventHandlers {
-  constructor(player, gameEngine) {
-    this.player = player;
-    this.gameEngine = gameEngine; // Add reference to GameEngine
+  constructor({ onJump, onStopJump }) {
+    this.onJump = onJump;
+    this.onStopJump = onStopJump;
+
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    this.boundHandleKeyup = this.handleKeyup.bind(this);
 
     this.inputState = {
-      right: {
-        pressed: false,
-      },
-      left: {
-        pressed: false,
-      },
+      right: { pressed: false },
+      left: { pressed: false },
     };
   }
 
   setupListeners() {
-    window.addEventListener('keydown', this.handleKeydown.bind(this));
-    window.addEventListener('keyup', this.handleKeyup.bind(this));
+    window.addEventListener('keydown', this.boundHandleKeydown);
+    window.addEventListener('keyup', this.boundHandleKeyup);
   }
 
   handleKeydown(event) {
@@ -28,15 +27,9 @@ export default class EventHandlers {
       case 'A':
         this.inputState.left.pressed = true;
         break;
-      case 's':
-      case 'S':
-        this.player.velocity.y += 10;
-        break;
       case 'w':
       case 'W':
-        if (this.gameEngine.isPlayerOnGround()) {  // Check if the player is on the ground
-          this.player.velocity.y -= 20;  // Allow jump only if on the ground
-        }
+        this.onJump();  // Call the jump callback
         break;
     }
   }
@@ -51,11 +44,9 @@ export default class EventHandlers {
       case 'A':
         this.inputState.left.pressed = false;
         break;
-      case 's':
-      case 'S':
       case 'w':
       case 'W':
-        this.player.velocity.y = 0;
+        this.onStopJump();  // Call the stop jump callback
         break;
     }
   }

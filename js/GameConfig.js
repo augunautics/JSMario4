@@ -8,14 +8,18 @@ import Hill from './Hill.js';
 
 export default class GameConfig {
   constructor() {
+    this.init();
+  }
+
+  init() {
     // Initialize the canvas and context
+    console.log('init()');
     this.canvas = document.querySelector('canvas');
     this.canvas.width = 1024;
     this.canvas.height = 576;
     this.context = this.canvas.getContext('2d');
 
-    // Map to hold all game objects
-    this.gameObject = new Map();
+   
 
     // Initialize game objects
     this.background = new Background({
@@ -31,7 +35,7 @@ export default class GameConfig {
       height: 176,
       context: this.context,
       image: null,
-      speed: 0.5 // Slower speed for distant hill
+      speed: 0.5, // Slower speed for distant hill
     });
 
     this.player = new Player({
@@ -46,46 +50,65 @@ export default class GameConfig {
       gravity: 0.5,
     });
 
-    this.platform =  new Platform({
-        x: 0,  // Start at the left edge of the canvas
-        y: this.canvas.height - 125,  // Positioned at the bottom of the canvas
-        width: 2000,  // Extend the full width of the canvas
-        height: 125,  // Height of the ground section
-        context: this.context
+    this.platform = new Platform({
+      x: 0,
+      y: this.canvas.height - 125,
+      width: 2000,
+      height: 125,
+      context: this.context,
+    });
+
+ 
+
+    // Ensure image loader is not reloading images
+    if (!this.imageLoader) {
+      const gameObjectsImagesToLoad = [Background, Hill, Player, Platform];
+      this.imageLoader = new ImageLoader(gameObjectsImagesToLoad);
+    }
+
+    // Set the images back to the game objects
+    this.setImages();
+    
+    const jumpCallback = () => {
+      if (this.gameEngine.isPlayerOnGround()) {
+        this.player.velocity.y -= 20;
+      }
+    };
+    
+    const stopJumpCallback = () => {
+      this.player.velocity.y = 0;
+    };
+
+    if (!this.eventHandlers) {
+      this.eventHandlers = new EventHandlers({
+        onJump: jumpCallback,
+        onStopJump: stopJumpCallback,
       });
+      
+    }
 
-
-    // Add game objects to the map
-    this.gameObject.set(Background, this.background);
-    this.gameObject.set(Hill, this.hill);
-    this.gameObject.set(Player, this.player);
-    this.gameObject.set(Platform, this.platform);
-
-    // Initialize the game engine first
+    // Initialize the game engine
     this.gameEngine = new GameEngine({
       background: this.background,
       hill: this.hill,
       player: this.player,
       platform: this.platform,
       context: this.context,
-      eventHandlers: null, // Set to null initially
+      eventHandlers: this.eventHandlers,
       canvas: this.canvas,
+      config: this,
     });
 
-    // Initialize event handlers with the game engine
-    this.eventHandlers = new EventHandlers(this.player, this.gameEngine);
-
-    // Update the game engine with the event handlers
-    this.gameEngine.eventHandlers = this.eventHandlers;
-
-    // Initialize the image loader
-    const classesToLoad = [Background, Hill, Player, Platform ];
-    this.imageLoader = new ImageLoader(classesToLoad);
+    
   }
 
-  // Method to get any game object by class
-  getGameObject(cls) {
-    return this.gameObject.get(cls);
+  setImages() {
+    return this.imageLoader.getImages().then(() => {  // Ensure to return the promise here
+      this.background.setImage(this.imageLoader.getImage(Background.name));
+      this.hill.setImage(this.imageLoader.getImage(Hill.name));
+      this.player.setImage(this.imageLoader.getImage(Player.name));
+      this.platform.setImage(this.imageLoader.getImage(Platform.name));
+    });
   }
 
 
@@ -118,6 +141,4 @@ export default class GameConfig {
   getConfig() {
     return this;
   }
-
-
 }

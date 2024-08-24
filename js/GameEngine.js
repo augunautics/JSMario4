@@ -1,5 +1,5 @@
 export default class GameEngine {
-  constructor({ background, hill, player, platform, context, eventHandlers, canvas }) {
+  constructor({ background, hill, player, platform, context, eventHandlers, canvas, config }) {
     this.background = background;
     this.hill = hill;
     this.player = player;
@@ -7,13 +7,17 @@ export default class GameEngine {
     this.context = context;
     this.eventHandlers = eventHandlers;
     this.canvas = canvas;
+    this.config = config;
 
     this.scrollOffset = 0; // Initialize the scrollOffset variable
+    this.isResetting = false; // Track if the game is currently resetting
 
     this.animate = this.animate.bind(this);
   }
 
   animate() {
+    if (this.isResetting) return; // Prevent further animation during reset
+
     requestAnimationFrame(this.animate);
 
     // Set the fill color to white
@@ -25,27 +29,24 @@ export default class GameEngine {
     this.background.draw();
     this.platform.draw();
     this.handleHillParallaxMovement();
-    
 
     // Now handle player and platform movements, collisions, and rendering
     this.handlePlayerMovement();
     this.handlePlatformMovement();
     this.handleCollisionDetection();
 
-
     this.player.update();
     this.checkScrollOffset(); // Call the method to check scroll offset
+    this.checkEndGame();
   }
+
   handleHillParallaxMovement() {
     const isPlayerMoving = this.player.velocity.x !== 0;
     const isPlatformMoving = this.platform.velocity && this.platform.velocity.x !== 0;
 
-
-
     if (isPlayerMoving) {
       if (this.player.velocity.x > 0) {
         // Player is moving right, hill should move left
-
         this.hill.move();
       } else if (this.player.velocity.x < 0) {
         // Player is moving left, hill should move right
@@ -65,11 +66,6 @@ export default class GameEngine {
 
     this.hill.draw();  // Draw the hill
   }
-
-
-
-
-
 
   handlePlayerMovement() {
     const movementSpeed = 2; // Define a constant for the player's movement speed
@@ -116,7 +112,6 @@ export default class GameEngine {
     const playerRight = this.player.x + this.player.width;
 
     const platformTop = this.platform.y;
-    const platformBottom = this.platform.y + this.platform.height;
     const platformLeft = this.platform.x;
     const platformRight = this.platform.x + this.platform.width;
 
@@ -131,18 +126,38 @@ export default class GameEngine {
     }
   }
 
-  // New method to check the scrollOffset and log when it exceeds 2000
   checkScrollOffset() {
     if (this.scrollOffset > 2000) {
       console.log('Scroll offset exceeded 2000:', this.scrollOffset);
     }
     if (this.scrollOffset < 0) {
-      console.log('Scroll offset less than 0:', this.scrollOffset);
+      //console.log('Scroll offset less than 0:', this.scrollOffset);
+    }
+  }
+
+  checkEndGame() {
+    const playerTop = this.player.y;
+    const canvasBottom = this.canvas.height;
+
+    if (playerTop > canvasBottom && !this.isResetting) {
+      console.log('End Game');
+      this.isResetting = true; // Prevent further reset calls
+
+      this.player.y = 1000;
+      this.player.velocity.y = 0; // Reset the velocity to prevent immediate re-falling
+      this.player.update;
+
+
+      // Reinitialize the game after a short delayawwwwdd
+      setTimeout(() => {
+        this.config.init();
+        this.config.getGameEngine().animate();  // Restart the animation loop
+        this.isResetting = false; // Reset flag after the game restarts
+      }, 50);// Minimal delay to avoid immediate re-triggeringdw
     }
   }
 
   isPlayerOnGround() {
-    const playerTop = this.player.y;
     const playerBottom = this.player.y + this.player.height;
     const playerLeft = this.player.x;
     const playerRight = this.player.x + this.player.width;
@@ -157,5 +172,4 @@ export default class GameEngine {
       playerLeft < platformRight
     );
   }
-
 }
