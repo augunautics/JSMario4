@@ -34,11 +34,14 @@ export default class GameEngine {
 
     this.background.draw();
     this.platform.draw();
-    this.handleHillParallaxMovement();
+    this.hill.draw();
+   
+    //this.handleHillParallaxMovement();
 
     // Now handle player and platform movements, collisions, and rendering
     this.handlePlayerMovement();
     this.handlePlatformMovement();
+    this.handleHillMovement()
     this.handleCollisionDetection();
 
     this.player.update();
@@ -46,32 +49,7 @@ export default class GameEngine {
     this.checkEndGame();
   }
 
-  handleHillParallaxMovement() {
-    const isPlayerMoving = this.player.velocity.x !== 0;
-    const isPlatformMoving = this.platform.velocity && this.platform.velocity.x !== 0;
 
-    if (isPlayerMoving) {
-      if (this.player.velocity.x > 0) {
-        // Player is moving right, hill should move left
-        this.hill.move();
-      } else if (this.player.velocity.x < 0) {
-        // Player is moving left, hill should move right
-        this.hill.x += this.hill.speed;
-      }
-    } else if (isPlatformMoving) {
-      const platformVelocityX = this.platform.velocity.x;
-
-      if (platformVelocityX < 0) {
-        // Platform is moving right, hill should move left
-        this.hill.move();  // Hill move left
-      } else if (platformVelocityX > 0) {
-        // Platform is moving left, hill should move right
-        this.hill.x += this.hill.speed;  // Hill move right
-      }
-    }
-
-    this.hill.draw();  // Draw the hill
-  }
 
   handlePlayerMovement() {
     const movementSpeed = 2; // Define a constant for the player's movement speed
@@ -91,6 +69,20 @@ export default class GameEngine {
       this.player.velocity.x = 0;
     }
   }
+
+  handleHillMovement() {
+    const movementSpeed = 5;
+  
+    const isRightPressed = this.eventHandlers.inputState.right.pressed;
+    const isLeftPressed = this.eventHandlers.inputState.left.pressed;
+  
+    if (isRightPressed && this.player.velocity.x === 0) {
+      this.hill.x -= movementSpeed; // Move hill left when player is stationary and moving right
+    } else if (isLeftPressed && this.player.velocity.x === 0) {
+      this.hill.x += movementSpeed; // Move hill right when player is stationary and moving left
+    }
+  }
+  
 
   handlePlatformMovement() {
     const movementSpeed = 5; // Define a constant for the platform movement speed

@@ -19,7 +19,7 @@ export default class GameConfig {
     console.log('init()');
     this.canvas = document.querySelector('canvas');
     this.canvas.width = 1024;
-    this.canvas.height = 576;
+    this.canvas.height = 800;
     this.context = this.canvas.getContext('2d');
 
     this.gameOver = new GameOver({ context: this.context, canvas: this.canvas }); 
@@ -34,13 +34,8 @@ export default class GameConfig {
     });
 
     this.hill = new Hill({
-      x: 200,
-      y: 0,
-      width: 1024,
-      height: 176,
       context: this.context,
-      image: null,
-      speed: 0.5, // Slower speed for distant hill
+      image: null,     
     });
 
     this.player = new Player({
